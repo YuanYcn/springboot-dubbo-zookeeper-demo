@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>问题页面</title>
+    <script type="text/javascript" src="/node_modules/jquery/dist/jquery.js"></script>
+    <style>
+        textarea{
+            resize: none;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <table>
+            <tr>
+                <td>问题：</td>
+                <td>
+                    <input type="text" name="title">
+                </td>
+            </tr>
+            <tr>
+                <td>问题描述：</td>
+                <td>
+                    <textarea name="detailDesc" cols="30" rows="10"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button onclick="saveq()">保存问题</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        function saveq() {
+            var title=$("[name=title]").val().trim();
+            var detailDesc=$("[name=detailDesc]").val().trim();
+            $.post("saveq.do",{title:title,detailDesc:detailDesc},function (msg) {
+                if(msg="success")
+                    location.href="index";
+                else
+                    alert("提交失败！");
+            });
+        }
+    </script>
+</body>
+</html>

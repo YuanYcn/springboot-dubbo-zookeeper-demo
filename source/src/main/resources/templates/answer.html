@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>问题页面</title>
+    <script type="text/javascript" src="/node_modules/jquery/dist/jquery.js"></script>
+    <style>
+        .ans{
+            background:greenyellow;
+            margin: 5px auto;
+        }
+        textarea{
+            resize: none;
+            overflow-y: scroll;
+        }
+        body{
+            width: 600px;
+        }
+        .row_title{
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <table>
+            <tr>
+                <td class="row_title">问题：</td>
+                <td th:text="${que.title}"></td>
+            </tr>
+            <tr>
+                <td class="row_title">问题描述:</td>
+                <td th:text="${que.detailDesc}"></td>
+            </tr>
+            <tr>
+                <td valign="top" class="row_title">网友回答:</td>
+                <td>
+                    <div th:if="${not #lists.isEmpty(que.list)}" id="ans_box">
+                        <div th:each="ans:${que.list}"  class="ans">
+                            <p th:text="${#dates.format(ans.ansDate, 'yyyy-MM-dd hh:mm:ss')}"></p>
+                            <p th:text="${ans.ansContent}"></p>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(que.list)}">
+                        暂无回复
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="row_title">我来回答：</td>
+                <td>
+                    <textarea name="ansContent" cols="60" rows="10"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button th:onclick="'savea('+${que.id}+',null)'">提交答案</button>
+                    <a href="index">返回首页</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script >
+        function savea(id,ansContent){
+            ansContent=$("[name=ansContent]").val().trim();
+            if(ansContent==""){
+                alert("回复内容不能为空");
+                return;
+            }
+            $.post("savea.do",{qid:id,ansContent:ansContent},function(msg){
+                if(msg=="success"){
+                    alert("提交成功");
+                    location.reload();
+                }
+            },"text");
+        }
+    </script>
+</body>
+</html>

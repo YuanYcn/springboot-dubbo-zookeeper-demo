@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="dubbo-question" owner="dubbo-question"/>
+    <!-- 使用zookeeper注册中心暴露服务地址 -->
+    <dubbo:registry address="zookeeper://192.168.0.102:2181" check="false" subscribe="false"/>
+    <dubbo:protocol name="dubbo" port="20880"/>
+    <!-- 用户服务接口 -->
+    <dubbo:service interface="com.bdqn.service.RegisterService" ref="registerService"/>
+    <dubbo:service interface="com.bdqn.service.IQuestionService" ref="questionService"/>
+    <bean id="questionService" class="com.bdqn.serviceImpl.QuestionServiceImpl"></bean>
+    <bean id="registerService" class="com.bdqn.serviceImpl.RegisterServiceImpl"></bean>
+</beans>

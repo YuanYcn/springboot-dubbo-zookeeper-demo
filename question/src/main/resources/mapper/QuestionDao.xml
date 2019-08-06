@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "http://mybatis.org/dtd/mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdqn.dao.QuestionDao">
+	<!-- 查询所有问题 -->
+	<select id="getAllQuestion" resultType="Question">
+		select 	
+			id, 
+			title, 
+			detailDesc, 
+			answerCount, 
+			lastModified
+		from exam.questions 
+		order by lastModified DESC
+		limit #{start},#{pageSize}
+	</select>
+	
+	<resultMap type="Question" id="QuestionWithAnswer">
+		<id column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="detailDesc" property="detailDesc"/>
+		<result column="lastModified" property="lastModified"/>
+		<collection property="list" ofType="Answer">
+			<id column="aid" property="id"/>
+			<result  column="ansContent" property="ansContent"/>
+			<result  column="ansDate" property="ansDate"/>
+		</collection>
+	</resultMap>
+	<!-- 查询所有问题回复 -->
+	<select id="getAllAnswerOfQuestion" resultMap="QuestionWithAnswer">
+		select 	
+			q.id, 
+			q.title, 
+			q.detailDesc, 
+			q.lastModified,
+			a.id aid,
+			a.ansContent,
+			a.ansDate
+		from exam.questions q
+		left join answer a
+		on a.qid=q.id
+		where q.id=#{qid}
+		order by ansDate DESC
+	</select>
+	<insert id="saveQuestion">
+		insert into exam.questions (
+			id, 
+			title, 
+			detailDesc, 
+			answerCount, 
+			lastModified
+		)values(
+			null, 
+			#{title}, 
+			#{detailDesc}, 
+			0, 
+			now()
+		)
+	</insert>
+	<!--<insert id="saveAnswer">
+		insert into exam.answer(
+			id, 
+			ansContent, 
+			ansDate, 
+			qid
+		)values(
+			null, 
+			#{ansContent}, 
+			now(), 
+			#{qid}
+		)
+	</insert>-->
+	<update id="updateQuestionCount">
+		update exam.questions set
+			answerCount=answerCount+1, 
+			lastModified=now()
+		where id=#{qid}
+	</update>
+	<select id="getAllQuestionCount" resultType="Integer">
+		select count(1) from questions
+	</select>
+</mapper>
